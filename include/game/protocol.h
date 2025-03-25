@@ -3,6 +3,7 @@
 
 enum message_type_e
 {
+    mt_close,
     mt_range,
     mt_guess,
     mt_answer_right,

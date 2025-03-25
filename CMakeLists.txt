@@ -10,11 +10,13 @@ set(DIR_SOURCE "src")
 set(SERVER_SRC
     ${DIR_SOURCE}/server/server.c
     ${DIR_SOURCE}/server/client.c
+    ${DIR_SOURCE}/game/game.c
 )
 
 set(SERVER_HEAD
     ${DIR_INCLUDE}/status.h
-    ${DIR_INCLUDE}/protocol.h
+    ${DIR_INCLUDE}/game/game.h
+    ${DIR_INCLUDE}/game/protocol.h
     ${DIR_INCLUDE}/network_exceptions.h
     ${DIR_INCLUDE}/server/server.h
     ${DIR_INCLUDE}/server/client.h
