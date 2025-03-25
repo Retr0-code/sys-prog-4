@@ -6,8 +6,6 @@
 #include "server/client.h"
 #include "network_exceptions.h"
 
-#define MAX_IPV6_LEN 30
-
 static int sock_server_bind_ipv4(sock_server_t *server, const char *lhost, in_port_t lport);
 
 static int sock_server_bind_ipv6(sock_server_t *server, const char *lhost, in_port_t lport);
@@ -31,6 +29,7 @@ int sock_server_create(
 
     sa_family_t domain = AF_INET;
     bind_ptr bind_func = &sock_server_bind_ipv4;
+    server->_use_ipv6 = (use_ipv6 != 0);
     if (use_ipv6)
     {
         domain = AF_INET6;
@@ -84,7 +83,7 @@ static int sock_server_bind_ipv4(sock_server_t *server, const char *lhost, in_po
 
 static int sock_server_bind_ipv6(sock_server_t *server, const char *lhost, in_port_t lport)
 {
-    char ipv6[MAX_IPV6_LEN];
+    char ipv6[INET6_ADDRSTRLEN];
     uint8_t delimeter_index = strcspn(lhost, "%");
     strncpy(ipv6, lhost, delimeter_index);
     const char *scope_id = lhost + delimeter_index;

@@ -14,6 +14,7 @@ set(SERVER_SRC
 
 set(SERVER_HEAD
     ${DIR_INCLUDE}/status.h
+    ${DIR_INCLUDE}/protocol.h
     ${DIR_INCLUDE}/network_exceptions.h
     ${DIR_INCLUDE}/server/server.h
     ${DIR_INCLUDE}/server/client.h

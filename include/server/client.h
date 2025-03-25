@@ -9,11 +9,20 @@
 #include "server/server.h"
 #include "network_exceptions.h"
 
+typedef union
+{
+    struct sockaddr_in  addr_v4;
+    struct sockaddr_in6 addr_v6;
+} sockaddr_u;
+
 typedef struct client_interface_t
 {
+    sockaddr_u           _address;
+    socklen_t            _address_len;
     struct sock_server_t *_server;
-    int32_t     _socket_descriptor;
-    uint32_t    _id;
+    int32_t              _socket_descriptor;
+    uint32_t             _id;
+    int                  _use_ipv6;
 } client_interface_t;
 
 int client_interface_create(client_interface_t *client, int sock_fd, struct sock_server_t *const server);
