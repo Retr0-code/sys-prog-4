@@ -48,3 +48,18 @@ int socket_fill_sockaddr_in6(sockaddr_u *addr, const char *lhost, in_port_t lpor
 
     return socket_error_success;
 }
+
+int socket_bind(sockaddr_u *addr, int use_ipv6, int socket_fd, const char *lhost, in_port_t lport)
+{
+    typedef int (*fill_sockaddr_ptr)(sockaddr_u *, const char *, in_port_t);
+
+    fill_sockaddr_ptr bind_func = use_ipv6 ? &socket_fill_sockaddr_in6 : &socket_fill_sockaddr_in;
+
+    if ((bind_func)(addr, lhost, lport) != socket_error_success)
+        return socket_error_bind;
+
+    if (bind(socket_fd,
+            (struct sockaddr *)addr,
+            use_ipv6 ? sizeof(struct sockaddr_in6) : sizeof(struct sockaddr_in)) != 0)
+        return socket_error_bind;
+}

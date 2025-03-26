@@ -11,4 +11,4 @@ typedef struct
     int             _use_ipv6;
 } sock_client_t;
 
-int sock_client_init(sock_client_t *client, const char *rhost, uint16_t rport, int use_ipv6);
+int sock_client_create(sock_client_t *client, const char *rhost, uint16_t rport, int use_ipv6);

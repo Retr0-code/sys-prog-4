@@ -13,3 +13,5 @@ typedef union
 int socket_fill_sockaddr_in(sockaddr_u *addr, const char *lhost, in_port_t lport);
 
 int socket_fill_sockaddr_in6(sockaddr_u *addr, const char *lhost, in_port_t lport);
+
+int socket_bind(sockaddr_u *addr, int use_ipv6, int socket_fd, const char *lhost, in_port_t lport);

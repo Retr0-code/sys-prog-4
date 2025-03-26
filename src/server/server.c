@@ -21,33 +21,23 @@ int sock_server_create(
 
     typedef int (*fill_sockaddr_ptr)(sockaddr_u *, const char *, in_port_t);
 
-    sa_family_t domain = AF_INET;
-    fill_sockaddr_ptr bind_func = &socket_fill_sockaddr_in;
     server->_use_ipv6 = (use_ipv6 != 0);
-    if (use_ipv6)
-    {
-        domain = AF_INET6;
-        bind_func = &socket_fill_sockaddr_in6;
-    }
+    sa_family_t domain = server->_use_ipv6 ? AF_INET6 : AF_INET;
 
     server->_socket_descriptor = socket(domain, sock_type, 0);
     if (server->_socket_descriptor == -1)
         return socket_error_init;
 
-    if ((bind_func)(&server->_address, lhost, lport) != socket_error_success)
+    if (socket_bind(&server->_address,
+                server->_use_ipv6,
+                server->_socket_descriptor,
+                lhost, lport
+    ) != socket_error_success)
     {
         sock_server_close(server);
         return socket_error_bind;
     }
-
-    if (bind(server->_socket_descriptor,
-            (struct sockaddr *)&server->_address,
-            use_ipv6 ? sizeof(struct sockaddr_in6) : sizeof(struct sockaddr_in)) != 0)
-    {
-        sock_server_close(server);
-        return socket_error_bind;
-    }
-
+    
     return socket_error_success;
 }
 
