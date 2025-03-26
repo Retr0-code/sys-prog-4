@@ -30,7 +30,7 @@ static int game_send_range(int client_fd, const range_t *range)
             message.message_length,
             0);
 
-    return -1;
+    return status;
 }
 
 int game_run(sock_server_t *server, client_interface_t *client)
@@ -45,7 +45,7 @@ int game_run(sock_server_t *server, client_interface_t *client)
     char client_address[INET6_ADDRSTRLEN];
     guess_number_t game;
     net_message_t message;
-    while (sock_server_listen_connection(&server, &client) == socket_error_success)
+    while (sock_server_listen_connection(server, client) == socket_error_success)
     {
         game_init(&game);
         memset(client_address, 0, INET6_ADDRSTRLEN);
@@ -59,7 +59,7 @@ int game_run(sock_server_t *server, client_interface_t *client)
         ssize_t received = recv(client->_socket_descriptor, buffer, BUFFERSIZE, 0);
         if (received == 0)
         {
-            client_interface_close(&client);
+            client_interface_close(client);
             continue;
         }
         if (received == -1)

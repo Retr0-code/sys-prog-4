@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <signal.h>
 
+#include "game/game.h"
 #include "server/server.h"
 
 #ifndef USE_IPV6
@@ -37,14 +38,14 @@ int main(int argc, char **argv)
                            0,
 #endif
                            SOCK_STREAM) != socket_error_success)
-    {
-        perror("Error initializing server");
         return -1;
-    }
 
     server_static = &server;
     client_static = &client;
     signal(SIGINT, &server_stop_handler);
     signal(SIGTERM, &server_stop_handler);
+
+    game_run(&server, &client);
+
     return 0;
 }

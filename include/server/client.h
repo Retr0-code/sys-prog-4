@@ -9,12 +9,6 @@
 #include "server/server.h"
 #include "network_exceptions.h"
 
-typedef union
-{
-    struct sockaddr_in  addr_v4;
-    struct sockaddr_in6 addr_v6;
-} sockaddr_u;
-
 typedef struct client_interface_t
 {
     sockaddr_u           _address;
