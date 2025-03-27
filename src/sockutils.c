@@ -1,3 +1,5 @@
+#include <stdio.h>
+#include <errno.h>
 #include <fcntl.h>
 #include <netdb.h>
 #include <unistd.h>
@@ -62,4 +64,21 @@ int socket_bind(sockaddr_u *addr, int use_ipv6, int socket_fd, const char *lhost
             (struct sockaddr *)addr,
             use_ipv6 ? sizeof(struct sockaddr_in6) : sizeof(struct sockaddr_in)) != 0)
         return socket_error_bind;
+}
+
+void socket_get_address(char *buffer, sockaddr_u *addr, int use_ipv6)
+{
+    if (use_ipv6)
+        inet_ntop(AF_INET6, &addr->addr_v6.sin6_addr, buffer, sizeof(addr->addr_v6));
+    else
+        inet_ntop(AF_INET, &addr->addr_v4.sin_addr, buffer, sizeof(addr->addr_v4));
+}
+
+void socket_shutdown_close(int socket_fd)
+{
+    if (shutdown(socket_fd, SHUT_RDWR) != 0)
+        fprintf(stderr, "%s Shuting down client:\t%s\n", WARNING, strerror(errno));
+    
+    if (close(socket_fd) != 0)
+        fprintf(stderr, "%s Closing client:\t%s\n", WARNING, strerror(errno));
 }

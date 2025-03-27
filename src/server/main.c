@@ -18,8 +18,8 @@
 #define PORT 4444
 #endif
 
-static sock_server_t *server_static;
-static client_interface_t *client_static;
+static sock_server_t *server_static = NULL;
+static client_interface_t *client_static = NULL;
 
 void server_stop_handler(int singal)
 {

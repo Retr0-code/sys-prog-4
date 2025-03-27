@@ -19,8 +19,6 @@ int sock_server_create(
         return socket_error_invalid_args;
     }
 
-    typedef int (*fill_sockaddr_ptr)(sockaddr_u *, const char *, in_port_t);
-
     server->_use_ipv6 = (use_ipv6 != 0);
     sa_family_t domain = server->_use_ipv6 ? AF_INET6 : AF_INET;
 
