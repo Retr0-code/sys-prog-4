@@ -47,7 +47,8 @@ int game_run(sock_server_t *server, client_interface_t *client)
 
         if (game_receive_guess(client->_socket_descriptor, &game.guess) != me_success)
         {
-            fprintf(stderr, "%s %s:Receiving client guess:\t%s\n", strerror(errno));
+            fprintf(stderr, "%s %s:Receiving client guess:\t%s\n",
+                    ERROR, client_address, strerror(errno));
             continue;
         }
 

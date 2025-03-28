@@ -127,6 +127,7 @@ int main(int argc, char **argv)
             break;
         }
         printf("%i is right answer\n", guess);
+        
         break;
     }
     sock_client_stop(&client);
