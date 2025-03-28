@@ -33,30 +33,34 @@ int game_run(sock_server_t *server, client_interface_t *client)
     while (sock_server_listen_connection(server, client) == socket_error_success)
     {
         game_init(&game);
+        printf("%s Game initiated with range [%i; %i] and answer=%i\n",
+               INFO, game.range.bottom, game.range.top, game.answer);
         memset(client_address, 0, INET6_ADDRSTRLEN);
         socket_get_address(client_address, &client->_address, client->_use_ipv6);
 
-        printf("%s:Client connected\n", client_address);
+        printf("%s %s:Client connected\n", INFO, client_address);
         if (game_send_range(client->_socket_descriptor, &game.range) != me_success)
         {
-            perror("Error sending range");
+            fprintf(stderr, "%s %s:Sending range:\t%s\n", strerror(errno));
             continue;
         }
 
         if (game_receive_guess(client->_socket_descriptor, &game.guess) != me_success)
         {
-            perror("Error receiving client guess");
+            fprintf(stderr, "%s %s:Receiving client guess:\t%s\n", strerror(errno));
             continue;
         }
+
+        printf("%s %s:Client guess is %i\n", INFO, client_address, game.guess);
 
         if (game_send_answer(client->_socket_descriptor,
-            game.guess ? mt_answer_right : mt_answer_wrong) != me_success)
+                             game.guess == game.answer ? mt_answer_right : mt_answer_wrong) != me_success)
         {
-            perror("Error sending answer");
+            fprintf(stderr, "%s %s:Sending answer:\t%s\n", strerror(errno));
             continue;
         }
 
-        printf("%s:Client disconnected\n", client_address);
+        printf("%s %s:Client disconnected\n", INFO, client_address);
     }
     return 0;
 }

@@ -1,8 +1,9 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <signal.h>
 
-#include "game/game.h"
 #include "server/server.h"
+#include "game/game_server.h"
 
 #ifndef USE_IPV6
 #ifndef HOST
@@ -27,17 +28,27 @@ void server_stop_handler(int singal)
     sock_server_close(server_static);
 }
 
+extern inline int check_ip_version(const char *host)
+{
+    return strcspn(host, ".") == strlen(host);
+}
+
 int main(int argc, char **argv)
 {
+    if (argc < 3)
+    {
+        fprintf(stderr, "%s No interface specified\n", ERROR);
+        return -1;
+    }
+
+    const char *host = argv[1];
+    uint16_t port = atoi(argv[2]);
+    int use_ipv6 = check_ip_version(host);
+
     sock_server_t server;
     client_interface_t client;
-    if (sock_server_create(&server, HOST, PORT,
-#ifdef USE_IPV6
-                           1,
-#else
-                           0,
-#endif
-                           SOCK_STREAM) != socket_error_success)
+    if (sock_server_create(
+            &server, host, port, use_ipv6, SOCK_STREAM) != socket_error_success)
         return -1;
 
     server_static = &server;

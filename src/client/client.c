@@ -47,7 +47,7 @@ int sock_client_connect(sock_client_t *client)
     if (connect(client->_socket_descriptor, (struct sockaddr*)&client->_address,
         client->_use_ipv6 ? sizeof(struct sockaddr_in6) : sizeof(struct sockaddr_in)) == -1)
     {
-        fprintf(stderr, "%s Client could not connect to server %s:%u:\t%s", ERROR, rhost, rport, strerror(errno));
+        fprintf(stderr, "%s Client could not connect to server %s:%u:\t%s\n", ERROR, rhost, rport, strerror(errno));
         return socket_error_bind;
     }
 
