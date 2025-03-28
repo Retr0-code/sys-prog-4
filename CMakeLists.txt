@@ -28,6 +28,8 @@ if (USE_IPV6)
   add_definitions(-DUSE_IPV6)
 endif()
 
+add_compile_options(-Wno-incompatible-pointer-types -Wno-discarded-qualifiers)
+
 add_library(${PROJECT_NAME}_server_objs STATIC ${SERVER_SRC})
 target_include_directories(${PROJECT_NAME}_server_objs PUBLIC ${DIR_INCLUDE})
 add_executable(${PROJECT_NAME}-server ${DIR_SOURCE}/server/main.c)
