@@ -113,21 +113,42 @@ int main(int argc, char **argv)
         }
         if (status != me_success)
             break;
-        printf("Guess the number in range [%i; %i]> ", range.bottom, range.top);
-        guess_function(range_ptr, &guess);
-        if (game_send_guess(client._socket_descriptor, &guess) != me_success)
-        {
-            fprintf(stderr, "%s Something went wrong while sending:\t%s\n", ERROR, strerror(errno));
-            break;
-        }
 
-        if (game_receive_answer(client._socket_descriptor) == me_wrong_type)
+        do
         {
-            printf("%i is wrong answer\n", guess);
-            break;
-        }
-        printf("%i is right answer\n", guess);
-        
+            printf("Guess the number in range [%i; %i]> ", range.bottom, range.top);
+            guess_function(range_ptr, &guess);
+            if (game_send_guess(client._socket_descriptor, &guess) != me_success)
+            {
+                fprintf(stderr, "%s Something went wrong while sending:\t%s\n", ERROR, strerror(errno));
+                break;
+            }
+
+            int answer = a_right;
+            if (game_receive_answer(client._socket_descriptor, &answer) != me_success)
+                break;
+            
+            switch (answer)
+            {
+                case a_right:
+                    printf("%i is right answer\n", guess);
+                    break;
+                case a_less:
+                    printf("%i is less than answer\n", guess);
+                    break;
+
+                case a_more:
+                    printf("%i is more than answer\n", guess);
+                    break;
+
+                default:
+                    break;
+            }
+            if (a_right == guess)
+                break;
+
+            // TODO send retry or close
+        } while (/*retry or close*/);
         break;
     }
     sock_client_stop(&client);

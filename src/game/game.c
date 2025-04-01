@@ -23,10 +23,10 @@ int game_receive_guess(int client_fd, int *guess)
 
 int game_send_answer(int client_fd, int answer)
 {
-    return message_send(client_fd, answer, 0, NULL);
+    return message_send(client_fd, mt_answer, answer, NULL);
 }
 
-int game_receive_answer(int client_fd)
+int game_receive_answer(int client_fd, int *answer)
 {
-    return message_receive(client_fd, mt_answer_right, 0, NULL);
+    return message_receive(client_fd, mt_answer, sizeof(int), &answer);
 }

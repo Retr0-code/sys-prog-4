@@ -27,4 +27,4 @@ int game_receive_guess(int client_fd, int *guess);
 
 int game_send_answer(int client_fd, int answer);
 
-int game_receive_answer(int client_fd);
+int game_receive_answer(int client_fd, int answer);

@@ -6,8 +6,15 @@ enum message_type_e
     mt_close,
     mt_range,
     mt_guess,
-    mt_answer_right,
-    mt_answer_wrong
+    mt_answer,
+    mt_retry
+};
+
+enum answer_e
+{
+    a_right,
+    a_less,
+    a_more
 };
 
 typedef struct
