@@ -33,64 +33,47 @@ int game_run(sock_server_t *server, client_interface_t *client, size_t max_tries
     while (sock_server_listen_connection(server, client) == socket_error_success)
     {
         game_init(&game);
+        game.tries = max_tries;
         printf("%s Game initiated with range [%i; %i] and answer=%i\n",
                INFO, game.range.bottom, game.range.top, game.answer);
         memset(client_address, 0, INET6_ADDRSTRLEN);
         socket_get_address(client_address, &client->_address, client->_use_ipv6);
 
         printf("%s %s:Client connected\n", INFO, client_address);
-        if (game_send_range(client->_socket_descriptor, &game.range) != me_success)
+        if (game_send_client_settings(
+                client->_socket_descriptor, (game_client_settings_t *)&game) != me_success)
         {
             fprintf(stderr, "%s %s:Sending range:\t%s\n", strerror(errno));
             continue;
         }
 
-        int retry_status = me_success;
-        size_t tries = 0;
         do
         {
-            printf("%s:Client try #%i\n", client_address, tries);
-            if (tries == max_tries)
-            {
-                printf("%s:Client exceeded amount of tries\n", client_address);
-                break;
-            }
-            switch (retry_status)
-            {
-                case me_receive:
-                    fprintf(stderr, "%s Something went wrong while receiving retry:\t%s\n", ERROR, strerror(errno));
-                    break;
-                case me_peer_end:
-                    fprintf(stderr, "%s Server closed connection\n", ERROR);
-                    break;
-                default:
-                    break;
-            }
-            if (retry_status != me_success)
-                break;
-
+            printf("%s:Client try #%i\n", client_address, max_tries - game.tries);
             if (game_receive_guess(client->_socket_descriptor, &game.guess) != me_success)
             {
                 fprintf(stderr, "%s %s:Receiving client guess:\t%s\n",
-                        ERROR, client_address, strerror(errno));
-                continue;
+                        WARNING, client_address, strerror(errno));
+                break;
             }
 
             printf("%s %s:Client guess is %i\n", INFO, client_address, game.guess);
 
             int answer = a_right;
-            if (game.guess != game.answer && game.guess - game.answer > 0)
+            if (game.guess - game.answer > 0)
                 answer = a_more;
             else
-                answer = a_less;
+                answer = game.guess - game.answer ? a_less : a_right;
 
             if (game_send_answer(client->_socket_descriptor, answer) != me_success)
             {
                 fprintf(stderr, "%s %s:Sending answer:\t%s\n", strerror(errno));
-                continue;
+                break;
             }
-            ++tries;
-        } while ((retry_status = game_receive_answer(client->_socket_descriptor, mt_close)));
+        } while (--game.tries);
+
+        if (!game.tries)
+            printf("%s:Client exceeded amount of tries\n", client_address);
 
         client_interface_close(client);
         printf("%s %s:Client disconnected\n", INFO, client_address);

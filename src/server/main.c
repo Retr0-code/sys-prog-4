@@ -35,7 +35,7 @@ extern inline int check_ip_version(const char *host)
 
 int main(int argc, char **argv)
 {
-    if (argc < 3)
+    if (argc < 4)
     {
         fprintf(stderr, "%s No interface specified\n", ERROR);
         return -1;
@@ -44,6 +44,9 @@ int main(int argc, char **argv)
     const char *host = argv[1];
     uint16_t port = atoi(argv[2]);
     int use_ipv6 = check_ip_version(host);
+    int max_tries = atoi(argv[3]);
+    if (max_tries <= 0)
+        return -1;
 
     sock_server_t server;
     client_interface_t client;
@@ -56,7 +59,7 @@ int main(int argc, char **argv)
     signal(SIGINT, &server_stop_handler);
     signal(SIGTERM, &server_stop_handler);
 
-    game_run(&server, &client);
+    game_run(&server, &client, max_tries);
 
     return 0;
 }
