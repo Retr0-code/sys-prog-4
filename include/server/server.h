@@ -28,7 +28,7 @@
 */
 typedef struct sock_server_t
 {
-    sockaddr_u      _address;              // Address descriptor
+    sockaddr_u      _address;               // Address descriptor
     atomic_int      _stop_listening;        // State variable for listening thread
     int             _socket_descriptor;     // Descriptor of server socket
     int             _use_ipv6;

@@ -21,11 +21,13 @@
 
 static sock_server_t *server_static = NULL;
 static client_interface_t *client_static = NULL;
+static thread_node_t *threads = NULL;
 
 void server_stop_handler(int singal)
 {
     client_interface_close(client_static);
     sock_server_close(server_static);
+    threads_close(threads);
 }
 
 extern inline int check_ip_version(const char *host)
@@ -59,7 +61,7 @@ int main(int argc, char **argv)
     signal(SIGINT, &server_stop_handler);
     signal(SIGTERM, &server_stop_handler);
 
-    game_run(&server, &client, max_tries);
+    game_run(&server, &client, max_tries, &threads);
 
     return 0;
 }
