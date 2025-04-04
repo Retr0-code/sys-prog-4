@@ -67,7 +67,7 @@ int game_run(sock_server_t *server, client_interface_t *client, size_t max_tries
 
             if (game_send_answer(client->_socket_descriptor, answer) != me_success)
             {
-                fprintf(stderr, "%s %s:Sending answer:\t%s\n", strerror(errno));
+                fprintf(stderr, "%s %s:Sending answer:\t%s\n", ERROR, client_address, strerror(errno));
                 break;
             }
         } while (--game.tries);
